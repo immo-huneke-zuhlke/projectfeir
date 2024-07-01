@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)
 
@@ -25,17 +25,24 @@ def supplier_dashboard():
 def help_pages():
   return f"This is some help!"
 
+skeleton_reply = {
+  'title': 'This is information that would be displayed on a dashboard'
+}
+
 @app.route("/api/enterprise_dashboard")
 def enterprise_api():
-  return "{\"title\": \"This is the information to be displayed on the enterprise dashboard!\"}"
+  skeleton_reply['target_audience'] = "Enterprise"
+  return jsonify(skeleton_reply)
 
 @app.route("/api/sme_dashboard")
 def sme_api():
-  return "{\"title\": \"This is the information to be displayed on the sme_dashboard!\"}"
+  skeleton_reply['target_audience'] = "SME"
+  return jsonify(skeleton_reply)
 
 @app.route("/api/supplier_dashboard")
 def supplier_api():
-  return "{\"title\": \"This is the information to be displayed on the supplier_dashboard!\"}"
+  skeleton_reply['target_audience'] = "Supplier"
+  return jsonify(skeleton_reply)
 
 if __name__ == "__main__":
   app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 3000)))

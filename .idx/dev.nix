@@ -17,5 +17,17 @@
       # Runs when a workspace is (re)started
       onStart = { run-server = "./devserver.sh"; };
     };
+
+    # Enable previews and customize configuration
+    previews = {
+      enable = true;
+      previews = {
+        web = {
+          command = [ "./devserver.sh" ];
+          env = { PORT = "$PORT"; };
+          manager = "web";
+        };
+      };
+    };
   };
 }

@@ -11,19 +11,19 @@ def index():
 
 @app.route("/pages/enterprise")
 def enterprise_dashboard():
-  return f"This is page enterprise_dashboard!"
+  return render_template('enterprise_index.html')
 
 @app.route("/pages/sme")
 def sme_dashboard():
-  return f"This is page sme_dashboard!"
+  return render_template('sme_index.html')
 
 @app.route("/pages/supplier")
 def supplier_dashboard():
-  return f"This is page supplier_dashboard!"
+  return render_template('aupplier_index.html')
 
 @app.route("/pages/help")
 def help_pages():
-  return f"This is some help!"
+  return "This is some help!"
 
 skeleton_reply = {
   'title': 'This is information that would be displayed on a dashboard'

@@ -65,7 +65,7 @@ fig.update_layout(
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 # Define the layout of the app
 app.layout = html.Main(className='container', children=[
-    html.H1("FEIR"),
+    html.H1("EARN - Energy Appliance ROI Navigator"),
     dcc.Dropdown(
         id='tariff-dropdown',
         options=[

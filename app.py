@@ -18,12 +18,18 @@ appliance_df = pd.DataFrame({
 
 
 # Create a Dash app instance
-app = dash.Dash(__name__)
+external_stylesheets = [
+    "https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
+]
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 # Define the layout of the app
-app.layout = html.Div([
+
+app.layout = html.Main(className='container', children=[
+
+    
     html.H1("FEIR"),
-    html.Button('Connect Your Supplier', id='submit-val', n_clicks=0),
     dcc.Dropdown(
         id='tariff-dropdown',
         options=[
@@ -65,7 +71,7 @@ app.layout = html.Div([
     Input('tariff-dropdown', 'value')
 )
 def update_bar_chart(selected_tariff):
-    fig = px.bar(df, x='Tariff', y='Amount', title=f'Amount of {selected_tariff}')
+    fig = px.bar(df, x='Tariff', y='Amount', title=f'Unit prices of tariff {selected_tariff}')
     return fig
 
 
@@ -100,7 +106,7 @@ def update_cost_saving(selected_tariff, selected_appliance):
     if selected_tariff and selected_appliance:
         tariff_amount = df.loc[df['Tariff'] == selected_tariff, 'Amount'].values[0]
         appliance_consumption = appliance_df.loc[appliance_df['Name'] == selected_appliance, 'Consumption'].values[0]
-        cost_saving = tariff_amount - appliance_consumption
+        cost_saving = (tariff_amount - appliance_consumption) * (-1)
         return f"Cost Saving for {selected_appliance} under {selected_tariff}: {cost_saving}"
     return "Select both a tariff and an appliance to see cost saving."
 

@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": true
+            },
+            "previewLimit": 50,
+            "server": "ep-little-feather-a2mo1kuc.eu-central-1.pg.koyeb.app",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "koyebdb",
+            "database": "koyebdb",
+            "username": "koyeb-adm",
+            "password": "UNSWzTDML56K"
+        }
+    ]
+}

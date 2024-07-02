@@ -86,7 +86,7 @@ app.layout = html.Main(className='container', children=[
             {'label': 'Battery', 'value': 'Battery'},
             {'label': 'SolarPanel', 'value': 'SolarPanel'}
         ],
-        value='Microwave',
+        value='Fridge',
         searchable = False,
         clearable= False
     ),
@@ -98,7 +98,7 @@ app.layout = html.Main(className='container', children=[
             {'label': 'Battery', 'value': 'Battery'},
             {'label': 'SolarPanel', 'value': 'SolarPanel'}
         ],
-        value='Microwave',
+        value='Fridge',
         searchable = False,
         clearable= False
     ),

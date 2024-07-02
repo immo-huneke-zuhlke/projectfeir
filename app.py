@@ -3,17 +3,18 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
+import plotly.graph_objects as go
 
 # Create a sample DataFrame
 df = pd.DataFrame({
     "Tariff": ["AGILE-24-04-03", "AGILE-BB-24-04-03", "COOP-FIX-12M-24-06-28", "COOP-PP-VAR-20-04-01"],
-    "Amount": [4, 1, 2, 3]
+    "Amount": [430, 410, 380, 390]
 })
 
 appliance_df = pd.DataFrame({
-    "Name": ["Fridge", "Fridge2", "Microwave", "Batterry", "SolarPanel"],
-    "Consumption": [4, 3, 1, 2, 3],
-    "Type": ["Fridge", "Fridge", "Microwave", "Battery", "SolarPanel"]
+    "Name": ["CoolTech Supreme", "FrostGuard Elite", "ChillMaster Pro", "IceFlow Ultra", "Microwave", "Batterry", "SolarPanel"],
+    "Consumption": [230, 165, 210, 200, 430, 430, 430],
+    "Type": ["Fridge", "Fridge", "Fridge", "Fridge", "Microwave", "Battery", "SolarPanel"]
 })
 
 
@@ -22,13 +23,35 @@ external_stylesheets = [
     "https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
 ]
 
+
+# Sample data
+months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+fridge_0 = [80, 130, 170, 200, 240, 270, 310, 330, 340, 360, 387, 410]
+fridge_1 = [120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230]
+fridge_2 = [60, 80, 90, 95, 100, 107, 114, 120, 130, 138, 150, 165]
+fridge_3 = [100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210]
+fridge_4 = [90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
+
+# Create traces
+fig = go.Figure()
+
+fig.add_trace(go.Scatter(x=months, y=fridge_0, mode='lines+markers', name="Current Fridge"))
+fig.add_trace(go.Scatter(x=months, y=fridge_1, mode='lines+markers', name="CoolTech Supreme"))
+fig.add_trace(go.Scatter(x=months, y=fridge_2, mode='lines+markers', name="FrostGuard Elite"))
+fig.add_trace(go.Scatter(x=months, y=fridge_3, mode='lines+markers', name="ChillMaster Pro"))
+fig.add_trace(go.Scatter(x=months, y=fridge_4, mode='lines+markers', name="IceFlow Ultra"))
+
+# Layout
+fig.update_layout(
+    title='Monthly Cumulative Consumption of Different Fridges',
+    xaxis_title='Month',
+    yaxis_title='Consumption (kWh)',
+    legend_title='Fridges'
+)
+
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
 # Define the layout of the app
-
 app.layout = html.Main(className='container', children=[
-
-    
     html.H1("FEIR"),
     dcc.Dropdown(
         id='tariff-dropdown',
@@ -38,7 +61,9 @@ app.layout = html.Main(className='container', children=[
             {'label': 'COOP-FIX-12M-24-06-28', 'value': 'COOP-FIX-12M-24-06-28'},
             {'label': 'COOP-PP-VAR-20-04-01', 'value': 'COOP-PP-VAR-20-04-01'}
         ],
-        value='AGILE-24-04-03'
+        value='AGILE-24-04-03',
+        searchable = False,
+        clearable= False
     ),
     dcc.Dropdown(
         id='appliance-type-dropdown',
@@ -48,20 +73,29 @@ app.layout = html.Main(className='container', children=[
             {'label': 'Battery', 'value': 'Battery'},
             {'label': 'SolarPanel', 'value': 'SolarPanel'}
         ],
-        value='Fridge'
+        value='Fridge',
+        searchable = False,
+        clearable= False
     ),
     dcc.Dropdown(
         id='appliance-dropdown',
         options=[
-            {'label': 'Fridge', 'value': 'Fridge'},
+            {'label': 'CoolTech Supreme', 'value': 'CoolTech Supreme'},
             {'label': 'Microwave', 'value': 'Microwave'},
             {'label': 'Battery', 'value': 'Battery'},
             {'label': 'SolarPanel', 'value': 'SolarPanel'}
         ],
-        value='Fridge'
+        value='CoolTech Supreme',
+        searchable = False,
+        clearable= False
     ),
     dcc.Graph(id='bar-chart'),
-    dcc.Graph(id='line-chart'),
+    html.Div(id='tariff-saving', children="On your current tariff you are spending 430 GBP/month, just by switching to the best tariff you can save a total of 50 GBP/month"),
+    # dcc.Graph(id='line-chart'),
+    dcc.Graph(
+        id='fridge-consumption-linechart',
+        figure=fig
+    ),
     html.Div(id='cost-saving')
 ])
 
@@ -71,18 +105,19 @@ app.layout = html.Main(className='container', children=[
     Input('tariff-dropdown', 'value')
 )
 def update_bar_chart(selected_tariff):
-    fig = px.bar(df, x='Tariff', y='Amount', title=f'Unit prices of tariff {selected_tariff}')
+    fig = px.line(df, x='Tariff', y='Amount', title=f'Energy Cost Per Tariff', markers=True)
+    # fig = px.line(df, x='Tariff', y='Amount', title=f'Consumption Cost per Tariff {selected_tariff}')
     return fig
 
 
 # Define callback to update the line chart based on the dropdown selection
-@app.callback(
-    Output('line-chart', 'figure'),
-    Input('tariff-dropdown', 'value')
-)
-def update_line_chart(selected_tariff):
-    fig = px.line(df, x='Tariff', y='Amount', title=f'Energy Cost Per Tariff', markers=True)
-    return fig
+# @app.callback(
+#     Output('line-chart', 'figure'),
+#     Input('tariff-dropdown', 'value')
+# )
+# def update_line_chart(selected_tariff):
+#     fig = px.line(df, x='Tariff', y='Amount', title=f'Energy Cost Per Tariff', markers=True)
+#     return fig
 
 # Callback to update the item dropdown based on category selection
 @app.callback(
@@ -103,10 +138,11 @@ def set_item_options(selected_category):
     Input('appliance-dropdown', 'value')
 )
 def update_cost_saving(selected_tariff, selected_appliance):
+    selected_appliance = 'FrostGuard Elite'
     if selected_tariff and selected_appliance:
         tariff_amount = df.loc[df['Tariff'] == selected_tariff, 'Amount'].values[0]
         appliance_consumption = appliance_df.loc[appliance_df['Name'] == selected_appliance, 'Consumption'].values[0]
-        cost_saving = (tariff_amount - appliance_consumption) * (-1)
+        cost_saving = (tariff_amount - appliance_consumption) 
         return f"Cost Saving for {selected_appliance} under {selected_tariff}: {cost_saving}"
     return "Select both a tariff and an appliance to see cost saving."
 
